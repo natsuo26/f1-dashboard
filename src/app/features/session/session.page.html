@@ -1,0 +1,80 @@
+@if (data.error()) {
+  <div class="state error">Couldn't load this session. OpenF1 may be rate limiting; try again shortly.</div>
+} @else if (!data.hasValue()) {
+  <span class="skeleton title"></span>
+  <span class="skeleton panel"></span>
+} @else if (ctx(); as c) {
+  <div class="page-head">
+    <div>
+      <div class="eyebrow">
+        <a [routerLink]="['/season', c.session.year]">{{ c.session.year }}</a> ·
+        {{ c.meeting?.meeting_name ?? c.session.country_name }}
+      </div>
+      <h1>{{ c.session.session_name }}</h1>
+      <p>
+        {{ c.session.circuit_short_name }}, {{ c.session.country_name }} ·
+        {{ c.session.date_start | date: 'EEE d MMM y, HH:mm' }}
+      </p>
+    </div>
+    <sheep-button variant="solid" (click)="openReplay()">Track replay ▶</sheep-button>
+  </div>
+
+  <sheep-chip-set ariaLabel="Weekend sessions">
+    @for (s of c.weekend; track s.session_key) {
+      <a sheep-chip size="sm" [routerLink]="['/session', s.session_key]" [selected]="s.session_key === c.session.session_key">
+        {{ s.session_name }}
+      </a>
+    }
+  </sheep-chip-set>
+
+  @if (weather(); as w) {
+    <section class="card stats weather" aria-label="Weather">
+      <div class="stat"><span class="eyebrow">Air</span><strong>{{ w.air | number: '1.0-1' }}°C</strong></div>
+      <div class="stat"><span class="eyebrow">Track</span><strong>{{ w.trackMin | number: '1.0-0' }}–{{ w.trackMax | number: '1.0-0' }}°C</strong></div>
+      <div class="stat"><span class="eyebrow">Humidity</span><strong>{{ w.humidity | number: '1.0-0' }}%</strong></div>
+      <div class="stat"><span class="eyebrow">Wind</span><strong>{{ w.wind | number: '1.1-1' }} m/s</strong></div>
+      <div class="stat">
+        <span class="eyebrow">Rain</span>
+        <strong>
+          @if (w.rain) {
+            <sheep-badge tone="primary" label="Wet spells" />
+          } @else {
+            Dry
+          }
+        </strong>
+      </div>
+    </section>
+  }
+
+  <section class="card section">
+    <sheep-chip-set ariaLabel="Session data">
+      @for (t of tabs; track t.id) {
+        <a
+          sheep-chip
+          [routerLink]="[]"
+          [queryParams]="{ tab: t.id }"
+          replaceUrl
+          [selected]="activeTab() === t.id"
+          >{{ t.label }}</a
+        >
+      }
+    </sheep-chip-set>
+    @switch (activeTab()) {
+      @case ('results') {
+        <app-results-tab [ctx]="c" />
+      }
+      @case ('laps') {
+        <app-laps-tab [ctx]="c" />
+      }
+      @case ('tyres') {
+        <app-tyres-tab [ctx]="c" />
+      }
+      @case ('pits') {
+        <app-pits-tab [ctx]="c" />
+      }
+      @case ('control') {
+        <app-control-tab [ctx]="c" />
+      }
+    }
+  </section>
+}

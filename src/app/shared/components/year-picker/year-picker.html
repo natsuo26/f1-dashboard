@@ -1,0 +1,5 @@
+<sheep-chip-set ariaLabel="Season">
+  @for (y of years; track y) {
+    <a sheep-chip size="sm" [routerLink]="[base(), y]" [selected]="y === year()">{{ y }}</a>
+  }
+</sheep-chip-set>

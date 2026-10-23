@@ -1,0 +1,92 @@
+:host {
+  display: contents;
+}
+.replay {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: var(--sheep-space-8);
+  align-items: start;
+}
+@media (max-width: 860px) {
+  .replay {
+    grid-template-columns: 1fr;
+  }
+}
+.track-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sheep-space-6);
+}
+.track-wrap {
+  position: relative;
+}
+.track {
+  width: 100%;
+  max-height: 68vh;
+  display: block;
+}
+.outline-under {
+  fill: none;
+  stroke: var(--sheep-color-surface-sunk);
+  stroke-width: 22;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.outline {
+  fill: none;
+  stroke: var(--sheep-color-line-strong);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+.car {
+  stroke: var(--sheep-color-surface);
+  stroke-width: 2;
+}
+.car-num {
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--sheep-font-body);
+}
+.car-label {
+  font-size: 13px;
+  font-weight: 600;
+  fill: var(--sheep-color-text);
+  paint-order: stroke;
+  stroke: var(--sheep-color-surface);
+  stroke-width: 3px;
+}
+.dim {
+  opacity: 0.25;
+}
+.buffering {
+  position: absolute;
+  inset: auto 0 8px;
+  text-align: center;
+  color: var(--sheep-color-text-muted);
+  font-size: 0.8rem;
+}
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--sheep-space-6);
+  flex-wrap: wrap;
+}
+.controls .range {
+  flex: 1;
+  min-width: 160px;
+}
+.clock {
+  min-width: 64px;
+  text-align: end;
+}
+.small {
+  font-size: 0.8rem;
+}
+.pos {
+  width: 18px;
+  text-align: end;
+}
+.order {
+  max-height: 80vh;
+  overflow: auto;
+}

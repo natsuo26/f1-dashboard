@@ -1,0 +1,38 @@
+@if (data.error()) {
+  <div class="state error">Couldn't load race control messages.</div>
+} @else if (data.isLoading() && !data.hasValue()) {
+  <span class="skeleton panel"></span>
+} @else {
+  <sheep-chip-set ariaLabel="Message type" class="filters">
+    @for (f of filters; track f.id) {
+      <button sheep-chip size="sm" [selected]="filter() === f.id" (click)="filter.set(f.id)">
+        {{ f.label }} · {{ counts()[f.id] }}
+      </button>
+    }
+  </sheep-chip-set>
+  @if (messages().length === 0) {
+    <div class="state">No messages of this type.</div>
+  } @else {
+    <sheep-list size="sm" divided>
+      @for (m of messages(); track $index) {
+        <sheep-list-item>
+          <div sheepListItemTitle>{{ m.message }}</div>
+          <div sheepListItemLine class="line">
+            @if (m.flag && flagColor(m.flag); as fc) {
+              <sheep-badge size="sm" [label]="m.flag" [color]="fc.color" [textColor]="fc.text" emphasis="high" />
+            } @else {
+              <sheep-badge size="sm" [label]="m.category" [tone]="tone(m)" />
+            }
+            @if (m.lap_number) {
+              <span>Lap {{ m.lap_number }}</span>
+            }
+            @if (m.sector) {
+              <span>Sector {{ m.sector }}</span>
+            }
+          </div>
+          <span sheepListItemMeta class="mono">{{ m.date | date: 'HH:mm:ss' }}</span>
+        </sheep-list-item>
+      }
+    </sheep-list>
+  }
+}

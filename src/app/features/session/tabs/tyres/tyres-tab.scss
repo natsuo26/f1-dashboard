@@ -1,0 +1,16 @@
+.stint {
+  stroke: var(--sheep-color-surface);
+  stroke-width: 1.5;
+}
+.chart .label {
+  fill: var(--sheep-color-text);
+  font-weight: 600;
+}
+.chart .age {
+  font-size: 10px;
+  font-weight: 600;
+  pointer-events: none;
+}
+.chart {
+  min-width: 560px;
+}

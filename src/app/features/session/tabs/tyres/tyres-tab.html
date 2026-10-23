@@ -1,0 +1,55 @@
+@if (data.error()) {
+  <div class="state error">Couldn't load tyre stints.</div>
+} @else if (data.isLoading() && !data.hasValue()) {
+  <span class="skeleton tall"></span>
+} @else if (rows().length === 0) {
+  <div class="state">No tyre data for this session.</div>
+} @else {
+  <div class="legend" aria-hidden="true">
+    @for (c of compounds; track c) {
+      <span><i [style.background]="color(c)"></i>{{ c.charAt(0) + c.slice(1).toLowerCase() }}</span>
+    }
+    <span class="muted">· Labels show tyre age when fitted (laps)</span>
+  </div>
+  <div class="scroll-x">
+    <svg
+      class="chart"
+      [attr.viewBox]="'0 0 ' + W + ' ' + height()"
+      role="img"
+      aria-label="Tyre stints per driver by lap"
+    >
+      <g class="grid">
+        @for (t of ticks(); track t) {
+          <line [attr.x1]="x()(t)" [attr.x2]="x()(t)" [attr.y1]="M.top" [attr.y2]="height() - M.bottom" />
+          <text [attr.x]="x()(t)" [attr.y]="height() - M.bottom + 18" text-anchor="middle">{{ t }}</text>
+        }
+      </g>
+      @for (r of rows(); track r.driver.number) {
+        <g>
+          <text [attr.x]="M.left - 8" [attr.y]="r.y + ROW / 2 + 4" text-anchor="end" class="label">
+            {{ r.driver.acronym }}
+          </text>
+          <rect [attr.x]="M.left - 5" [attr.y]="r.y + 3" width="3" [attr.height]="ROW - 6" [attr.fill]="r.driver.color" rx="1" />
+          @for (b of r.bars; track $index) {
+            <rect
+              class="stint"
+              [attr.x]="b.x"
+              [attr.y]="r.y"
+              [attr.width]="b.width"
+              [attr.height]="ROW"
+              [attr.fill]="b.fill"
+              rx="3"
+            >
+              <title>{{ b.title }}</title>
+            </rect>
+            @if (b.width > minLabelWidth) {
+              <text class="age" [attr.fill]="b.ink" [attr.x]="b.x + b.width / 2" [attr.y]="r.y + ROW / 2 + 4" text-anchor="middle">
+                {{ b.letter }}
+              </text>
+            }
+          }
+        </g>
+      }
+    </svg>
+  </div>
+}

@@ -1,0 +1,15 @@
+<header class="app-header">
+  <sheep-nav-bar ariaLabel="Main">
+    <a sheepNavBarStart class="brand" routerLink="/"><span class="brand-mark">F1</span> Dashboard</a>
+    <a sheep-nav-bar-item routerLink="/season" routerLinkActive ariaCurrentWhenActive="page">Season</a>
+    <a sheep-nav-bar-item routerLink="/standings" routerLinkActive ariaCurrentWhenActive="page">Standings</a>
+    <sheep-theme-switcher sheepNavBarEnd />
+  </sheep-nav-bar>
+</header>
+<main class="app-main">
+  <router-outlet />
+</main>
+<footer class="app-footer">
+  Data from <a href="https://openf1.org" target="_blank" rel="noopener">OpenF1</a>, an unofficial,
+  non-commercial API. Not affiliated with Formula 1 or the FIA.
+</footer>

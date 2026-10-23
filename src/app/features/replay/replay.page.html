@@ -1,0 +1,104 @@
+@if (data.error()) {
+  <div class="state error">Couldn't load the replay. OpenF1 may be rate limiting; try again shortly.</div>
+} @else if (!data.hasValue()) {
+  <span class="skeleton title"></span>
+  <span class="skeleton tall"></span>
+} @else if (data.value(); as d) {
+  <div class="page-head">
+    <div>
+      <div class="eyebrow">
+        <a [routerLink]="['/session', d.session.session_key]">← {{ d.session.country_name }} {{ d.session.session_name }}</a>
+      </div>
+      <h1>Track replay</h1>
+      <p>{{ d.session.circuit_short_name }} · positions from OpenF1 car location data (~3.7 Hz).</p>
+    </div>
+  </div>
+
+  @if (!fit()) {
+    <div class="state">No location data available for this session.</div>
+  } @else {
+    <div class="replay">
+      <section class="card track-card">
+        <div class="track-wrap">
+          <svg
+            class="track"
+            [attr.viewBox]="'0 0 ' + fit()!.width + ' ' + fit()!.height"
+            role="img"
+            [attr.aria-label]="'Map of ' + d.session.circuit_short_name + ' with car positions'"
+          >
+            <path class="outline-under" [attr.d]="outline()" />
+            <path class="outline" [attr.d]="outline()" />
+            @for (c of cars(); track c.number) {
+              <g [attr.transform]="'translate(' + c.x + ',' + c.y + ')'" [class.dim]="focus() !== null && focus() !== c.number">
+                <circle r="11" [attr.fill]="c.color" class="car" />
+                <text text-anchor="middle" dy="3.5" [attr.fill]="c.text" class="car-num">{{ c.number }}</text>
+                @if (focus() === c.number || focus() === null) {
+                  <text class="car-label" x="14" dy="4">{{ c.acronym }}</text>
+                }
+              </g>
+            }
+          </svg>
+          @if (buffering()) {
+            <div class="buffering">Loading car positions…</div>
+          }
+        </div>
+
+        <div class="controls">
+          <sheep-button
+            variant="solid"
+            shape="square"
+            [ariaLabel]="playing() ? 'Pause' : 'Play'"
+            (click)="toggle()"
+          >
+            {{ playing() ? '❚❚' : '▶' }}
+          </sheep-button>
+          <input
+            class="range"
+            type="range"
+            aria-label="Replay time"
+            [min]="range().start"
+            [max]="range().end"
+            [step]="scrubStep"
+            [value]="time()"
+            (input)="seek($event)"
+          />
+          <span class="clock mono">{{ elapsed() }}</span>
+        </div>
+        <div class="controls">
+          <sheep-chip-set ariaLabel="Playback speed">
+            @for (s of speeds; track s) {
+              <button sheep-chip size="sm" [selected]="speed() === s" (click)="speed.set(s)">{{ s }}×</button>
+            }
+          </sheep-chip-set>
+          <span class="muted small">
+            {{ time() | date: 'HH:mm:ss' : 'UTC' }} UTC
+            @if (leaderLap()) {
+              · Lap {{ leaderLap() }} / {{ totalLaps() }}
+            }
+          </span>
+        </div>
+      </section>
+
+      <aside class="card order">
+        <div class="card-title"><h2>Running order</h2></div>
+        <sheep-list size="sm">
+          @for (row of order(); track row.number; let i = $index) {
+            <button
+              sheep-list-item
+              [selected]="focus() === row.number"
+              (click)="focus.set(focus() === row.number ? null : row.number)"
+              [sheepTooltip]="row.name"
+              sheepTooltipPlacement="left"
+            >
+              <span sheepListItemIcon class="pos mono">{{ i + 1 }}</span>
+              <div sheepListItemTitle class="driver-cell">
+                <span class="team-bar" [style.background]="row.color"></span>{{ row.acronym }}
+              </div>
+              <span sheepListItemMeta class="muted small">{{ row.team }}</span>
+            </button>
+          }
+        </sheep-list>
+      </aside>
+    </div>
+  }
+}

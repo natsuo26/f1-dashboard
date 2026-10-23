@@ -1,0 +1,75 @@
+@if (data.error()) {
+  <div class="state error">Couldn't load results.</div>
+} @else if (data.isLoading() && !data.hasValue()) {
+  <span class="skeleton tall"></span>
+} @else if (rows().length === 0) {
+  <div class="state">No classification published for this session.</div>
+} @else {
+  <sheep-table [stickyHeader]="false" [data]="rows()" size="sm" [pageSize]="25">
+    <ng-container sheepColumnDef="position" sortable align="end" width="72px">
+      <sheep-header-cell *sheepHeaderCellDef>Pos</sheep-header-cell>
+      <sheep-cell *sheepCellDef="let r" class="num">{{ r.position ?? '–' }}</sheep-cell>
+    </ng-container>
+    <ng-container sheepColumnDef="driverName" sortable filterable [grow]="2">
+      <sheep-header-cell *sheepHeaderCellDef>Driver</sheep-header-cell>
+      <sheep-cell *sheepCellDef="let r">
+        <span class="driver-cell">
+          <span class="team-bar" [style.background]="r.driver.color"></span>
+          <span>{{ r.driver.name }}</span>
+          <span class="muted mono">{{ r.driver.number }}</span>
+        </span>
+      </sheep-cell>
+    </ng-container>
+    <ng-container sheepColumnDef="team" sortable filterable>
+      <sheep-header-cell *sheepHeaderCellDef>Team</sheep-header-cell>
+      <sheep-cell *sheepCellDef="let r" class="muted">{{ r.team }}</sheep-cell>
+    </ng-container>
+    @if (race()) {
+      <ng-container sheepColumnDef="grid" sortable align="end" width="76px">
+        <sheep-header-cell *sheepHeaderCellDef>Grid</sheep-header-cell>
+        <sheep-cell *sheepCellDef="let r" class="num muted">{{ r.grid ?? '–' }}</sheep-cell>
+      </ng-container>
+      <ng-container sheepColumnDef="gained" sortable align="center" width="72px">
+        <sheep-header-cell *sheepHeaderCellDef>±</sheep-header-cell>
+        <sheep-cell *sheepCellDef="let r">
+          @if (r.gained > 0) {
+            <sheep-badge tone="success" size="sm" [label]="'▲' + r.gained" />
+          } @else if (r.gained < 0) {
+            <sheep-badge tone="danger" size="sm" [label]="'▼' + -r.gained" />
+          } @else {
+            <span class="muted">–</span>
+          }
+        </sheep-cell>
+      </ng-container>
+    }
+    <ng-container sheepColumnDef="laps" sortable align="end" width="80px">
+      <sheep-header-cell *sheepHeaderCellDef>Laps</sheep-header-cell>
+      <sheep-cell *sheepCellDef="let r" class="num">{{ r.laps }}</sheep-cell>
+    </ng-container>
+    <ng-container sheepColumnDef="time" align="end" width="120px">
+      <sheep-header-cell *sheepHeaderCellDef>{{ race() ? 'Time' : 'Best' }}</sheep-header-cell>
+      <sheep-cell *sheepCellDef="let r" class="num">{{ r.time }}</sheep-cell>
+    </ng-container>
+    <ng-container sheepColumnDef="gap" align="end" width="96px">
+      <sheep-header-cell *sheepHeaderCellDef>Gap</sheep-header-cell>
+      <sheep-cell *sheepCellDef="let r" class="num muted">
+        @if (r.status) {
+          <sheep-badge
+            [tone]="r.status === 'DSQ' ? 'danger' : 'warning'"
+            size="sm"
+            [label]="r.status"
+            [sheepTooltip]="statusText[r.status]"
+          />
+        } @else {
+          {{ r.gap }}
+        }
+      </sheep-cell>
+    </ng-container>
+    @if (race()) {
+      <ng-container sheepColumnDef="points" sortable align="end" width="64px">
+        <sheep-header-cell *sheepHeaderCellDef>Pts</sheep-header-cell>
+        <sheep-cell *sheepCellDef="let r" class="num">{{ r.points ? (r.points | number: '1.0-1') : '' }}</sheep-cell>
+      </ng-container>
+    }
+  </sheep-table>
+}

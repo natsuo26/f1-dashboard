@@ -1,0 +1,111 @@
+@if (data.error()) {
+  <div class="state error">Couldn't load lap data.</div>
+} @else if (data.isLoading() && !data.hasValue()) {
+  <span class="skeleton panel"></span>
+} @else if (byDriver().size === 0) {
+  <div class="state">No lap timing for this session.</div>
+} @else {
+  <div class="toolbar">
+    <sheep-chip-set ariaLabel="Drivers on the chart">
+      @for (d of drivers(); track d.number) {
+        <button sheep-chip size="sm" [selected]="selected().has(d.number)" (click)="toggle(d.number)">
+          <span class="dot" [style.background]="d.color"></span>{{ d.acronym }}
+        </button>
+      }
+    </sheep-chip-set>
+    <div class="actions">
+      <sheep-button size="sm" variant="ghost" (click)="clean.set(!clean())">
+        {{ clean() ? 'Show all laps' : 'Hide pit & slow laps' }}
+      </sheep-button>
+      <sheep-button size="sm" variant="ghost" (click)="selected.set(emptySet)">Clear</sheep-button>
+    </div>
+  </div>
+
+  @if (series().length === 0) {
+    <div class="state">Pick one or more drivers to compare their laps.</div>
+  } @else {
+    <div class="chart-wrap">
+      <svg
+        class="chart"
+        [attr.viewBox]="'0 0 ' + W + ' ' + H"
+        role="img"
+        [attr.aria-label]="'Lap times for ' + series().length + ' drivers'"
+        (pointermove)="hover($event)"
+        (pointerleave)="hoverLap.set(null)"
+      >
+        <g class="grid">
+          @for (t of yTicks(); track t) {
+            <line [attr.x1]="M.left" [attr.x2]="W - M.right" [attr.y1]="scales().y(t)" [attr.y2]="scales().y(t)" />
+            <text [attr.x]="M.left - 8" [attr.y]="scales().y(t) + 4" text-anchor="end">{{ fmt(t) }}</text>
+          }
+        </g>
+        <g class="axis">
+          <line [attr.x1]="M.left" [attr.x2]="W - M.right" [attr.y1]="H - M.bottom" [attr.y2]="H - M.bottom" />
+          @for (t of xTicks(); track t) {
+            <text [attr.x]="scales().x(t)" [attr.y]="H - M.bottom + 18" text-anchor="middle">{{ t }}</text>
+          }
+          <text [attr.x]="W - M.right" [attr.y]="H - 2" text-anchor="end">Lap</text>
+        </g>
+        @for (s of series(); track s.driver.number) {
+          <path [attr.d]="s.path" fill="none" [attr.stroke]="s.driver.color" stroke-width="1.8" stroke-linejoin="round" />
+          @for (p of s.points; track p.lap) {
+            <circle [attr.cx]="p.x" [attr.cy]="p.y" r="2.2" [attr.fill]="s.driver.color" />
+          }
+        }
+        @if (hoverLap(); as lap) {
+          <line
+            class="guide"
+            [attr.x1]="scales().x(lap)"
+            [attr.x2]="scales().x(lap)"
+            [attr.y1]="M.top"
+            [attr.y2]="H - M.bottom"
+          />
+        }
+      </svg>
+      @if (readout(); as r) {
+        <div class="readout" [class.left]="r.flip">
+          <div class="eyebrow">Lap {{ r.lap }}</div>
+          @for (row of r.rows; track row.driver.number) {
+            <div class="readout-row">
+              <span class="dot" [style.background]="row.driver.color"></span>
+              <span>{{ row.driver.acronym }}</span>
+              <span class="num">{{ fmt(row.time) }}</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <h3 class="sub">Best laps &amp; sectors</h3>
+  <sheep-table [stickyHeader]="false" [data]="sectors()" size="sm" [pageSize]="25">
+    <ng-container sheepColumnDef="driverName" sortable filterable [grow]="2">
+      <sheep-header-cell *sheepHeaderCellDef>Driver</sheep-header-cell>
+      <sheep-cell *sheepCellDef="let r">
+        <span class="driver-cell">
+          <span class="team-bar" [style.background]="r.driver.color"></span>{{ r.driver.name }}
+        </span>
+      </sheep-cell>
+    </ng-container>
+    @for (col of sectorCols; track col.key) {
+      <ng-container [sheepColumnDef]="col.key" sortable align="end" width="104px">
+        <sheep-header-cell *sheepHeaderCellDef>{{ col.label }}</sheep-header-cell>
+        <sheep-cell *sheepCellDef="let r" class="num">
+          @if (r[col.key] !== null && r[col.key] === bests()[col.key]) {
+            <sheep-badge size="sm" [color]="fastest" textColor="#fff" emphasis="high" [label]="fmt(r[col.key])" />
+          } @else {
+            {{ fmt(r[col.key]) }}
+          }
+        </sheep-cell>
+      </ng-container>
+    }
+    <ng-container sheepColumnDef="speed" sortable align="end" width="96px">
+      <sheep-header-cell *sheepHeaderCellDef>Top km/h</sheep-header-cell>
+      <sheep-cell *sheepCellDef="let r" class="num muted">{{ r.speed ?? '—' }}</sheep-cell>
+    </ng-container>
+  </sheep-table>
+  <p class="muted note">
+    <sheep-badge size="sm" [color]="fastest" textColor="#fff" emphasis="high" label="Purple" /> marks the fastest
+    in the session. “Ideal” adds each driver's best three sectors.
+  </p>
+}

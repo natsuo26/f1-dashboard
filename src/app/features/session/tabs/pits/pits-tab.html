@@ -1,0 +1,49 @@
+@if (data.error()) {
+  <div class="state error">Couldn't load pit stops.</div>
+} @else if (data.isLoading() && !data.hasValue()) {
+  <span class="skeleton panel"></span>
+} @else if (rows().length === 0) {
+  <div class="state">No pit stops recorded for this session.</div>
+} @else {
+  <div class="stats summary">
+    <div class="stat"><span class="eyebrow">Stops</span><strong>{{ rows().length }}</strong></div>
+    @if (fastest(); as f) {
+      <div class="stat">
+        <span class="eyebrow">Fastest pit lane</span>
+        <strong>{{ f.lane | number: '1.1-1' }}s · {{ f.driver.acronym }}</strong>
+      </div>
+    }
+    @if (fastestStop(); as f) {
+      <div class="stat">
+        <span class="eyebrow">Fastest stationary</span>
+        <strong>{{ f.stop | number: '1.1-1' }}s · {{ f.driver.acronym }}</strong>
+      </div>
+    }
+  </div>
+  <sheep-table [stickyHeader]="false" [data]="rows()" size="sm" [pageSize]="25">
+    <ng-container sheepColumnDef="lap" sortable align="end" width="72px">
+      <sheep-header-cell *sheepHeaderCellDef>Lap</sheep-header-cell>
+      <sheep-cell *sheepCellDef="let r" class="num">{{ r.lap }}</sheep-cell>
+    </ng-container>
+    <ng-container sheepColumnDef="driverName" sortable filterable [grow]="2">
+      <sheep-header-cell *sheepHeaderCellDef>Driver</sheep-header-cell>
+      <sheep-cell *sheepCellDef="let r">
+        <span class="driver-cell">
+          <span class="team-bar" [style.background]="r.driver.color"></span>{{ r.driver.name }}
+        </span>
+      </sheep-cell>
+    </ng-container>
+    <ng-container sheepColumnDef="team" sortable filterable>
+      <sheep-header-cell *sheepHeaderCellDef>Team</sheep-header-cell>
+      <sheep-cell *sheepCellDef="let r" class="muted">{{ r.team }}</sheep-cell>
+    </ng-container>
+    <ng-container sheepColumnDef="lane" sortable align="end" width="110px">
+      <sheep-header-cell *sheepHeaderCellDef>Pit lane (s)</sheep-header-cell>
+      <sheep-cell *sheepCellDef="let r" class="num">{{ r.lane === null ? '—' : (r.lane | number: '1.1-1') }}</sheep-cell>
+    </ng-container>
+    <ng-container sheepColumnDef="stop" sortable align="end" width="110px">
+      <sheep-header-cell *sheepHeaderCellDef>Stationary (s)</sheep-header-cell>
+      <sheep-cell *sheepCellDef="let r" class="num">{{ r.stop === null ? '—' : (r.stop | number: '1.1-1') }}</sheep-cell>
+    </ng-container>
+  </sheep-table>
+}

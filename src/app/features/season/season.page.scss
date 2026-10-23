@@ -1,0 +1,36 @@
+:host {
+  display: contents;
+}
+.meeting {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sheep-space-4);
+}
+.meeting.next {
+  border-color: var(--sheep-color-accent);
+}
+.meeting-head {
+  display: flex;
+  gap: var(--sheep-space-4);
+  align-items: center;
+}
+.meeting-title {
+  min-width: 0;
+}
+.meeting-title h2 {
+  font-size: 1rem;
+}
+.flag {
+  width: 36px;
+  height: 24px;
+  object-fit: cover;
+  border-radius: 3px;
+  border: 1px solid var(--sheep-color-line);
+  flex: none;
+}
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sheep-space-2);
+  min-height: 4px;
+}

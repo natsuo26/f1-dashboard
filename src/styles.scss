@@ -1,0 +1,325 @@
+@use '@sheep-ng/ui/styles/sheep-theme';
+
+// App-level layout only. Components keep their own look; everything here
+// is built from the --sheep-* roles so light and dark follow the theme.
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--sheep-color-bg);
+  color: var(--sheep-color-text);
+  font-family: var(--sheep-font-body);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+a {
+  color: var(--sheep-color-accent);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--sheep-font-heading);
+  font-weight: var(--sheep-font-weight-heading);
+  margin: 0;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.6rem;
+}
+h2 {
+  font-size: 1.15rem;
+}
+h3 {
+  font-size: 0.95rem;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--sheep-color-surface);
+  border-bottom: 1px solid var(--sheep-color-line);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sheep-space-3);
+  font-weight: 700;
+  color: var(--sheep-color-text);
+  text-decoration: none;
+  white-space: nowrap;
+  margin-inline-end: var(--sheep-space-6);
+}
+
+.brand-mark {
+  background: #e10600;
+  color: #fff;
+  font-style: italic;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: var(--sheep-radius-sm);
+  letter-spacing: 0.02em;
+}
+
+.app-main {
+  flex: 1;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--sheep-space-12) 16px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sheep-space-12);
+}
+
+.app-footer {
+  border-top: 1px solid var(--sheep-color-line);
+  color: var(--sheep-color-text-muted);
+  font-size: 0.8rem;
+  padding: var(--sheep-space-6) 16px;
+  text-align: center;
+}
+
+// ── Page building blocks ────────────────────────────────────────────────
+
+.page-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sheep-space-6);
+
+  p {
+    margin: var(--sheep-space-2) 0 0;
+    color: var(--sheep-color-text-muted);
+  }
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--sheep-color-text-muted);
+  font-weight: var(--sheep-font-weight-label);
+}
+
+.card {
+  background: var(--sheep-color-surface);
+  border: 1px solid var(--sheep-color-line);
+  border-radius: var(--sheep-radius-md);
+  box-shadow: var(--sheep-shadow-sm);
+  padding: var(--sheep-space-8);
+  min-width: 0;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sheep-space-4);
+  margin-bottom: var(--sheep-space-6);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sheep-space-6);
+}
+
+.grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--sheep-space-8);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr));
+  gap: var(--sheep-space-8);
+  align-items: start;
+}
+
+.muted {
+  color: var(--sheep-color-text-muted);
+}
+
+.mono,
+.num {
+  font-family: var(--sheep-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sheep-space-6) var(--sheep-space-12);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+
+  strong {
+    font-size: 1.1rem;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.driver-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sheep-space-3);
+  min-width: 0;
+
+  .team-bar {
+    width: 4px;
+    height: 18px;
+    border-radius: 2px;
+    flex: none;
+  }
+}
+
+.state {
+  padding: var(--sheep-space-12);
+  text-align: center;
+  color: var(--sheep-color-text-muted);
+  border: 1px dashed var(--sheep-color-line-strong);
+  border-radius: var(--sheep-radius-md);
+}
+
+.state.error {
+  color: var(--sheep-tone-danger-base);
+  border-color: var(--sheep-tone-danger-base);
+}
+
+// Skeleton placeholder for loading content.
+.skeleton {
+  display: block;
+  border-radius: var(--sheep-radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--sheep-color-surface-sunk) 25%,
+    var(--sheep-color-line) 50%,
+    var(--sheep-color-surface-sunk) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton 1.4s ease-in-out infinite;
+  min-height: 14px;
+}
+
+@keyframes skeleton {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
+// Native select styled to sit beside sheep controls (same md height).
+.select {
+  height: var(--sheep-ctl-md-height);
+  padding: 0 var(--sheep-ctl-md-pad-x);
+  font: inherit;
+  font-size: var(--sheep-ctl-md-font);
+  color: var(--sheep-color-text);
+  background: var(--sheep-color-surface);
+  border: 1px solid var(--sheep-color-line-strong);
+  border-radius: var(--sheep-ctl-md-radius);
+  max-width: 100%;
+}
+
+.range {
+  width: 100%;
+  accent-color: var(--sheep-color-accent);
+}
+
+// Shared SVG chart look.
+.chart {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+  font-family: var(--sheep-font-body);
+
+  .axis line,
+  .axis path {
+    stroke: var(--sheep-color-line);
+  }
+  .grid line {
+    stroke: var(--sheep-color-line);
+    stroke-dasharray: 2 3;
+  }
+  text {
+    fill: var(--sheep-color-text-muted);
+    font-size: 11px;
+  }
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sheep-space-3) var(--sheep-space-6);
+  font-size: 0.8rem;
+  color: var(--sheep-color-text-muted);
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sheep-space-2);
+  }
+
+  i {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 1px solid var(--sheep-color-line-strong);
+  }
+}
+
+.scroll-x {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.skeleton.title {
+  height: 64px;
+  max-width: 420px;
+}
+.skeleton.tile {
+  height: 150px;
+}
+.skeleton.panel {
+  height: 360px;
+}
+.skeleton.tall {
+  height: 480px;
+}

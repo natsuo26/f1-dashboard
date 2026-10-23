@@ -1,0 +1,97 @@
+<div class="page-head">
+  <div>
+    <div class="eyebrow">Championship</div>
+    <h1>{{ year() }} standings</h1>
+    @if (data.value()?.race; as race) {
+      <p>
+        After the
+        <a [routerLink]="['/session', race.session_key]">{{ race.country_name }} {{ race.session_name }}</a>
+        · {{ race.date_start | date: 'd MMM y' }}. Arrows show the change from that race.
+      </p>
+    }
+  </div>
+  <app-year-picker base="/standings" [year]="year()" />
+</div>
+
+@if (data.error()) {
+  <div class="state error">Couldn't load standings. OpenF1 may be rate limiting; try again shortly.</div>
+} @else if (data.isLoading() && !data.hasValue()) {
+  <div class="grid-2">
+    <div class="card"><span class="skeleton panel"></span></div>
+    <div class="card"><span class="skeleton panel"></span></div>
+  </div>
+} @else if (!data.value()?.race) {
+  <div class="state">No races completed in {{ year() }} yet.</div>
+} @else if (drivers().length === 0) {
+  <div class="state">
+    OpenF1 has no championship data for {{ year() }}. The standings endpoints are in beta and cover recent seasons.
+  </div>
+} @else {
+  <div class="grid-2">
+    <section class="card">
+      <div class="card-title"><h2>Drivers</h2></div>
+      <sheep-table [stickyHeader]="false" [data]="drivers()" size="sm" [pageSize]="25">
+        <ng-container sheepColumnDef="position" sortable align="end" width="72px">
+          <sheep-header-cell *sheepHeaderCellDef>Pos</sheep-header-cell>
+          <sheep-cell *sheepCellDef="let r" class="num">{{ r.position }}</sheep-cell>
+        </ng-container>
+        <ng-container sheepColumnDef="name" sortable filterable [grow]="2">
+          <sheep-header-cell *sheepHeaderCellDef>Driver</sheep-header-cell>
+          <sheep-cell *sheepCellDef="let r">
+            <span class="driver-cell">
+              <span class="team-bar" [style.background]="r.color"></span>
+              <span>{{ r.name }}</span>
+              <span class="muted mono">{{ r.number }}</span>
+            </span>
+          </sheep-cell>
+        </ng-container>
+        <ng-container sheepColumnDef="team" sortable filterable>
+          <sheep-header-cell *sheepHeaderCellDef>Team</sheep-header-cell>
+          <sheep-cell *sheepCellDef="let r" class="muted">{{ r.team }}</sheep-cell>
+        </ng-container>
+        <ng-container sheepColumnDef="points" sortable align="end" width="80px">
+          <sheep-header-cell *sheepHeaderCellDef>Pts</sheep-header-cell>
+          <sheep-cell *sheepCellDef="let r" class="num"><strong>{{ r.points | number: '1.0-1' }}</strong></sheep-cell>
+        </ng-container>
+        <ng-container sheepColumnDef="moved" sortable align="center" width="72px">
+          <sheep-header-cell *sheepHeaderCellDef>±</sheep-header-cell>
+          <sheep-cell *sheepCellDef="let r">
+            @if (r.moved > 0) {
+              <sheep-badge tone="success" size="sm" [label]="'▲' + r.moved" />
+            } @else if (r.moved < 0) {
+              <sheep-badge tone="danger" size="sm" [label]="'▼' + -r.moved" />
+            } @else {
+              <span class="muted">–</span>
+            }
+          </sheep-cell>
+        </ng-container>
+      </sheep-table>
+    </section>
+
+    <section class="card">
+      <div class="card-title"><h2>Constructors</h2></div>
+      <sheep-table [stickyHeader]="false" [data]="teams()" size="sm">
+        <ng-container sheepColumnDef="position" sortable align="end" width="72px">
+          <sheep-header-cell *sheepHeaderCellDef>Pos</sheep-header-cell>
+          <sheep-cell *sheepCellDef="let r" class="num">{{ r.position }}</sheep-cell>
+        </ng-container>
+        <ng-container sheepColumnDef="team" sortable [grow]="2">
+          <sheep-header-cell *sheepHeaderCellDef>Team</sheep-header-cell>
+          <sheep-cell *sheepCellDef="let r">
+            <span class="driver-cell">
+              <span class="team-bar" [style.background]="r.color"></span>{{ r.team }}
+            </span>
+          </sheep-cell>
+        </ng-container>
+        <ng-container sheepColumnDef="points" sortable align="end" width="80px">
+          <sheep-header-cell *sheepHeaderCellDef>Pts</sheep-header-cell>
+          <sheep-cell *sheepCellDef="let r" class="num"><strong>{{ r.points | number: '1.0-1' }}</strong></sheep-cell>
+        </ng-container>
+        <ng-container sheepColumnDef="gained" sortable align="end" width="80px">
+          <sheep-header-cell *sheepHeaderCellDef>Last race</sheep-header-cell>
+          <sheep-cell *sheepCellDef="let r" class="num muted">+{{ r.gained | number: '1.0-1' }}</sheep-cell>
+        </ng-container>
+      </sheep-table>
+    </section>
+  </div>
+}

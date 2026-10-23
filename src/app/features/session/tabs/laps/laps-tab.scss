@@ -1,0 +1,54 @@
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--sheep-space-4);
+}
+.actions {
+  display: flex;
+  gap: var(--sheep-space-2);
+}
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-inline-end: 4px;
+}
+.chart-wrap {
+  position: relative;
+}
+.guide {
+  stroke: var(--sheep-color-text-faint);
+  stroke-dasharray: 3 3;
+}
+.readout {
+  position: absolute;
+  top: 8px;
+  right: 24px;
+  background: var(--sheep-color-surface);
+  border: 1px solid var(--sheep-color-line-strong);
+  border-radius: var(--sheep-radius-sm);
+  box-shadow: var(--sheep-shadow-md);
+  padding: var(--sheep-space-3) var(--sheep-space-4);
+  font-size: 0.8rem;
+  pointer-events: none;
+  min-width: 130px;
+}
+.readout.left {
+  right: auto;
+  left: 72px;
+}
+.readout-row {
+  display: grid;
+  grid-template-columns: 12px 1fr auto;
+  gap: var(--sheep-space-3);
+  align-items: center;
+}
+.sub {
+  margin-top: var(--sheep-space-6);
+}
+.note {
+  font-size: 0.8rem;
+  margin: 0;
+}

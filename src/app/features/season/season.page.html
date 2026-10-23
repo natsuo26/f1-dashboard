@@ -1,0 +1,72 @@
+<div class="page-head">
+  <div>
+    <div class="eyebrow">Season</div>
+    <h1>{{ year() }} calendar</h1>
+    <p>Every Grand Prix weekend and test, with links into each session's data.</p>
+  </div>
+  <app-year-picker base="/season" [year]="year()" />
+</div>
+
+@if (data.error()) {
+  <div class="state error">Couldn't load the {{ year() }} calendar. OpenF1 may be rate limiting; try again shortly.</div>
+} @else if (data.isLoading() && !data.hasValue()) {
+  <div class="grid-cards">
+    @for (i of placeholders; track i) {
+      <div class="card"><span class="skeleton tile"></span></div>
+    }
+  </div>
+} @else if (cards().length === 0) {
+  <div class="state">No meetings published for {{ year() }} yet.</div>
+} @else {
+  <div class="grid-cards">
+    @for (c of cards(); track c.meeting.meeting_key) {
+      <article class="card meeting" [class.next]="c.status === 'next'">
+        <header class="meeting-head">
+          @if (c.meeting.country_flag) {
+            <img class="flag" [src]="c.meeting.country_flag" alt="" loading="lazy" />
+          }
+          <div class="meeting-title">
+            <h2>{{ c.meeting.meeting_name }}</h2>
+            <div class="muted">
+              {{ c.meeting.circuit_short_name }} · {{ c.meeting.date_start | date: 'd MMM' }}
+              @if (c.meeting.date_end) {
+                – {{ c.meeting.date_end | date: 'd MMM' }}
+              }
+            </div>
+          </div>
+        </header>
+        <div class="badges">
+          @if (c.meeting.is_cancelled) {
+            <sheep-badge tone="danger" label="Cancelled" size="sm" />
+          }
+          @if (c.testing) {
+            <sheep-badge tone="neutral" label="Testing" size="sm" />
+          }
+          @if (c.sprint) {
+            <sheep-badge tone="warning" label="Sprint" size="sm" />
+          }
+          @if (c.status === 'next') {
+            <sheep-badge tone="primary" emphasis="high" label="Next up" size="sm" />
+          } @else if (c.status === 'upcoming') {
+            <sheep-badge tone="neutral" label="Upcoming" size="sm" />
+          }
+        </div>
+        <sheep-list size="sm" divided>
+          @for (s of c.sessions; track s.session_key) {
+            @if (isPast(s)) {
+              <a sheep-list-item [routerLink]="['/session', s.session_key]">
+                <div sheepListItemTitle>{{ s.session_name }}</div>
+                <span sheepListItemMeta>{{ s.date_start | date: 'EEE HH:mm' }}</span>
+              </a>
+            } @else {
+              <sheep-list-item>
+                <div sheepListItemTitle class="muted">{{ s.session_name }}</div>
+                <span sheepListItemMeta>{{ s.date_start | date: 'EEE d MMM HH:mm' }}</span>
+              </sheep-list-item>
+            }
+          }
+        </sheep-list>
+      </article>
+    }
+  </div>
+}
