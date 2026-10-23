@@ -72,14 +72,11 @@ h3 {
   margin-inline-end: var(--sheep-space-6);
 }
 
-.brand-mark {
-  background: #e10600;
-  color: #fff;
-  font-style: italic;
-  font-weight: 800;
-  padding: 1px 6px;
-  border-radius: var(--sheep-radius-sm);
-  letter-spacing: 0.02em;
+.brand-logo {
+  display: block;
+  border-radius: 6px;
+  // Keeps the dark tile visible against the dark-theme nav bar.
+  box-shadow: 0 0 0 1px var(--sheep-color-line);
 }
 
 .app-main {
