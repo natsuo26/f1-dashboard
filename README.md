@@ -19,6 +19,14 @@ npm start
 
 Then open `http://localhost:4200/`. Run the unit tests with `npm test` and make a production build with `npm run build`.
 
+## Deployment (GitHub Pages)
+
+Every push to `main` runs [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml), which installs dependencies, runs the unit tests, builds, and deploys to https://natsuo26.github.io/f1-dashboard/. You can also run it by hand from the Actions tab.
+
+- `npm run build:pages` builds with `--base-href /f1-dashboard/`, then copies `index.html` to `404.html`. GitHub Pages serves `404.html` for unknown paths, so deep links like `/f1-dashboard/session/11388` still load the app.
+- If the repository is renamed, change the base href in the `build:pages` script to match.
+- In the repo, go to **Settings → Pages** and set **Source** to **GitHub Actions**.
+
 ## Project structure
 
 ```

@@ -17,7 +17,9 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "build:pages": "ng build --base-href /f1-dashboard/ && node scripts/spa-fallback.mjs",
+    "test:ci": "ng test --watch=false"
   },
   "private": true,
   "packageManager": "npm@11.19.0",
