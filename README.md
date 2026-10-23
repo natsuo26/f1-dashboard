@@ -64,4 +64,6 @@ Conventions:
 - Data during a live session needs a paid OpenF1 plan, so this app shows completed sessions only.
 - Replay location data is fetched in 60-second windows for all cars, about 650 kB each, prefetched ahead of the playhead.
 
-Data © their respective owners. OpenF1 is unofficial and for non-commercial use, and is not affiliated with Formula 1 or the FIA.
+## License
+
+The code is [MIT](LICENSE) licensed. F1 data is © its respective owners. OpenF1 is unofficial and for non-commercial use, and is not affiliated with Formula 1 or the FIA.

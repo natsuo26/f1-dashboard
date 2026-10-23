@@ -11,6 +11,7 @@
     "sheep-ng"
   ],
   "author": "natsuo26",
+  "license": "MIT",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
